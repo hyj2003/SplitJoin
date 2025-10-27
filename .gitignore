@@ -1,0 +1,11 @@
+*logs*
+*.log
+uspatent
+wgpb
+orkut
+gplus
+skitter
+topcats
+dataset.zip
+duckdb_baseline_profile
+duckdb_split_profile
