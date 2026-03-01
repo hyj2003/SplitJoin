@@ -2,8 +2,7 @@ import re
 import csv
 import sys
 import pandas as pd
-log_file = "umbra_baseline_1015_default.log"
-
+log_file = "umbra_baseline.log"
 start_pattern = re.compile(r"START\s*::\s*(.+)\s*-----")
 end_pattern = re.compile(r"END\s*::\s*(.+)\s*::\s*exit_code=(\d+)\s*-----")
 join_marker_pattern = re.compile(r"running\s+(q\d+)\s+(\S+)", re.IGNORECASE)
@@ -21,8 +20,9 @@ tle_flag = False
 def shortname(path: str):
     parts = path.strip().split("/")
     for i, p in enumerate(parts):
-        if re.fullmatch(r"q\d+", p):
-            return "/".join(parts[i:i + 3]) if i + 2 < len(parts) else "/".join(parts[i:])
+        if re.fullmatch(r"q\d+(?:_[A-Za-z0-9]+)?", p):
+            return "/".join(parts[i:i + 3]) if i + 1 < len(parts) else p
+
     return parts[-1]
 
 
@@ -31,6 +31,7 @@ with open(log_file, "r", encoding="utf-8", errors="ignore") as f:
         m = start_pattern.search(line)
         if m:
             current_query = shortname(m.group(1))
+            # print(current_query)
             results[current_query] = {"join_time_sec": 0.0, "status": "OK"}
             in_join_section = False
             oom_flag = tle_flag = False
